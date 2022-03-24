@@ -1,27 +1,49 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QToolTip
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QToolTip, QMainWindow
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import QCoreApplication
-# test용
+
+from tkinter import *
+from tkinter import filedialog
+
+# import tkinter as tk
+# import tkinter.filedialog as fd
 
 
-class MyApp(QWidget) :
+
+# class MyApp(QWidget) :
+class MyApp(QMainWindow) :
 
     def __init__(self) :
         super().__init__()
         self.initUI()
+        global DATA
 
     def initUI(self) :
 
+        # 하단 툴바 관련 설정
+        self.statusBar().showMessage('Ready')
+
+        # clearMessage - 텍스트가 사라짐
+        # currentMessage - 현재 상태바에 표시되는 메세지 텍스트를 가져온다
+        # QStatusBar 클래스는 상태바에 표시되는 메세지가 바뀔 때 마다 messageChanged 시그널을 발생시킨다.
+
+
         # 창 내부에 있는 버튼 관한 설정
     
-        btn = QPushButton('Quit', self)
+        btn_quit = QPushButton('Quit', self)
         # 푸시 버튼을 만든다
         # 첫번째 파라미터는 표시될 텍스트, 두번째 파라미터에는 버튼이 위치할 부모 위젯
-        btn.move(400, 10)
-        btn.resize(btn.sizeHint())
-        btn.clicked.connect(QCoreApplication.instance().quit)
+        btn_quit.move(400, 10)
+        btn_quit.resize(btn_quit.sizeHint())
+        btn_quit.clicked.connect(QCoreApplication.instance().quit)
         # 버튼을 클리하면 clicked시그널이 만들어진다
+
+        btn_browser = QPushButton('Browser', self)
+        # 파일 가져오는 버튼
+        btn_browser.move(320, 10)
+        btn_browser.resize(btn_browser.sizeHint())
+        btn_browser.clicked.connect(self.browseFiles)
 
 
 
@@ -45,6 +67,17 @@ class MyApp(QWidget) :
         self.show()
         # show - 위젯을 스크린에 보여줌
 
+
+
+    def browseFiles(self):
+        filename = filedialog.askopenfilename(initialdir = "/", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
+        print("file name : " + filename)
+
+        f = open(filename, 'r', encoding = "UTF-8")
+        lines = f.readlines()
+        print(lines)
+        for len in lines :
+            print(len.split('\n'))
 
 
 
