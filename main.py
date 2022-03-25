@@ -1,11 +1,10 @@
-import sys, time, random
+import sys, time, random, threading as th
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow
 from PyQt5.QtCore import QCoreApplication
 from tkinter import filedialog
 from pynput.keyboard import Key, Controller
 from pynput import keyboard
 
-# class MyApp(QWidget) :
 class MyApp(QMainWindow) :
 
     def __init__(self) :
@@ -69,99 +68,51 @@ class MyApp(QMainWindow) :
 
 
     def browseFiles(self):
-
         filename = filedialog.askopenfilename(initialdir = "/", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
-
-        # print("file name : " + filename)
-
         if(filename == ''):
             return
 
         f = open(filename, 'r', encoding="UTF-8")
         global lines
         lines = f.readlines()
-        # print(lines)
         self.statusBar().showMessage('File Connect : ' + filename)
 
+    let_bool = True
+    def going_thread(self):
+        with keyboard.Events() as events:
+            for event in events:
+                if event.key == keyboard.Key.esc:
+                    global let_bool
+                    let_bool = False
+                    QCoreApplication.instance().quit()
 
     def start(self):
-        # print('lines' in globals())
-
         if 'lines' in globals():
-            # print('데이터 있음')
-            # print(lines)
+            th.Thread(target=self.going_thread, args=(), name='going_thread', daemon=True).start()
             arr_len = len(lines)
             random.shuffle(lines)
             kbController = Controller()
-
-            # for i in range(arr_len):
-            #     time.sleep(2)
-            #     # print(lines[i].split('\n')[0])
-            #     data = lines[i].split('\n')[0]
-            #
-            #     kbController.type(data)
-            #
-            #     kbController.press(Key.enter)
-            #     kbController.release(Key.enter)
-            #
-            #     time.sleep(1)
-            # QCoreApplication.instance().quit()
-            # self.test()
+            global let_bool
             let_bool = True
             cnt = 0
+
             while let_bool:
-                    time.sleep(2)
-                    if(let_bool == False):
-                        break
-                    if(cnt == arr_len - 1):
-                        let_bool = False
+                time.sleep(1)
+                if let_bool is False:
+                    break
+                if cnt is arr_len - 1:
+                    let_bool = False
 
-                    data = lines[cnt].split('\n')[0]
-                    kbController.type(data)
-                    kbController.press(Key.enter)
-                    kbController.release(Key.enter)
-                    cnt += 1
-                    # with keyboard.Events() as events:
-                    #     for event in events:
-                    #         if event.key == keyboard.Key.esc:
-                    #             self.let_bool = False
-                    #             return False
-                    #         else :
-                    #             print('작동중')
-
+                data = lines[cnt].split('\n')[0]
+                kbController.type(data)
+                kbController.press(Key.enter)
+                kbController.release(Key.enter)
+                cnt += 1
+                time.sleep(1)
             QCoreApplication.instance().quit()
 
         else :
             return
-
-
-    # def test(self):
-    #     def on_press(key):
-    #         try:
-    #             print('alphanumeric key {0} pressed'.format(
-    #                 key.char))
-    #         except AttributeError:
-    #             print('special key {0} pressed'.format(
-    #                 key))
-    #
-    #     def on_release(key):
-    #         print('{0} released'.format(
-    #             key))
-    #         if key == keyboard.Key.esc:
-    #             # Stop listener
-    #             return False
-    #
-    #     # Collect events until released
-    #     # with keyboard.Listener(
-    #     #         on_press=on_press,
-    #     #         on_release=on_release) as listener:
-    #     #     listener.join()
-    #
-    #     # ...or, in a non-blocking fashion:
-    #     listener = keyboard.Listener(
-    #         on_press=on_press,
-    #         on_release=on_release)
-    #     listener.start()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
