@@ -76,7 +76,7 @@ class MyApp(QMainWindow) :
     def browseFiles(self):
         filename = filedialog.askopenfilename(initialdir = "/", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
 
-        print("file name : " + filename)
+        # print("file name : " + filename)
 
         if(filename == ''):
             return
@@ -84,7 +84,7 @@ class MyApp(QMainWindow) :
         f = open(filename, 'r', encoding="UTF-8")
         global lines
         lines = f.readlines()
-        print(lines)
+        # print(lines)
         self.statusBar().showMessage('File Connect : ' + filename)
 
 
@@ -92,30 +92,26 @@ class MyApp(QMainWindow) :
         print('lines' in globals())
 
         if 'lines' in globals():
-            print('데이터 있음')
-            print(lines)
+            # print('데이터 있음')
+            # print(lines)
             arr_len = len(lines)
             random.shuffle(lines)
 
             for i in range(arr_len):
-                print(lines[i].split('\n')[0])
+                time.sleep(3)
+                # print(lines[i].split('\n')[0])
                 data = lines[i].split('\n')[0]
                 kbController = Controller()
-
-                time.sleep(60)
-                # kbController.press(Key.space)
-                # kbController.release(Key.space)
-
-                # kbController.press('%s' %data)
-                # kbController.release('%s' %data)
 
                 kbController.type(data)
 
                 kbController.press(Key.enter)
                 kbController.release(Key.enter)
 
+                time.sleep(10)
+
         else :
-            print('No Data')
+            return
 
 
 if __name__ == '__main__':
