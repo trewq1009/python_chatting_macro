@@ -1,14 +1,14 @@
-import sys
+import sys, time, random
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QToolTip, QMainWindow
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import QCoreApplication
 
 from tkinter import *
 from tkinter import filedialog
-
 # import tkinter as tk
 # import tkinter.filedialog as fd
 
+from pynput.keyboard import Key, Controller
 
 
 # class MyApp(QWidget) :
@@ -17,7 +17,6 @@ class MyApp(QMainWindow) :
     def __init__(self) :
         super().__init__()
         self.initUI()
-        global DATA
 
     def initUI(self) :
 
@@ -46,6 +45,11 @@ class MyApp(QMainWindow) :
         btn_browser.clicked.connect(self.browseFiles)
 
 
+        btn_start = QPushButton('start', self)
+        btn_start.move(240, 10)
+        btn_start.resize(btn_start.sizeHint())
+        btn_start.clicked.connect(self.start)
+
 
         # 전체적인 창 틀에 관한 설정
 
@@ -71,15 +75,47 @@ class MyApp(QMainWindow) :
 
     def browseFiles(self):
         filename = filedialog.askopenfilename(initialdir = "/", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
+
         print("file name : " + filename)
 
-        f = open(filename, 'r', encoding = "UTF-8")
+        if(filename == ''):
+            return
+
+        f = open(filename, 'r', encoding="UTF-8")
+        global lines
         lines = f.readlines()
         print(lines)
-        for len in lines :
-            print(len.split('\n'))
+        self.statusBar().showMessage('File Connect : ' + filename)
 
 
+    def start(self):
+        print('lines' in globals())
+
+        if 'lines' in globals():
+            print('데이터 있음')
+            print(lines)
+            arr_len = len(lines)
+            random.shuffle(lines)
+
+            for i in range(arr_len):
+                print(lines[i].split('\n')[0])
+                data = lines[i].split('\n')[0]
+                kbController = Controller()
+
+                time.sleep(60)
+                # kbController.press(Key.space)
+                # kbController.release(Key.space)
+
+                # kbController.press('%s' %data)
+                # kbController.release('%s' %data)
+
+                kbController.type(data)
+
+                kbController.press(Key.enter)
+                kbController.release(Key.enter)
+
+        else :
+            print('No Data')
 
 
 if __name__ == '__main__':
