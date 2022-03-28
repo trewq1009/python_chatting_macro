@@ -1,0 +1,3 @@
+pip install pyinstaller
+pip install --upgrade pip
+pyinstaller -w -F main.py - 파일 컴파일

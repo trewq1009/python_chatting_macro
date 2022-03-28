@@ -1,5 +1,6 @@
+import os
 import sys, time, random, threading as th
-from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow
+from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QWidget, QLabel, QTextEdit, QVBoxLayout, QLineEdit
 from PyQt5.QtCore import QCoreApplication
 from tkinter import filedialog
 from pynput.keyboard import Key, Controller
@@ -23,7 +24,7 @@ class MyApp(QMainWindow) :
 
 
         # 창 내부에 있는 버튼 관한 설정
-    
+
         btn_quit = QPushButton('Quit', self)
         # 푸시 버튼을 만든다
         # 첫번째 파라미터는 표시될 텍스트, 두번째 파라미터에는 버튼이 위치할 부모 위젯
@@ -45,6 +46,22 @@ class MyApp(QMainWindow) :
         btn_start.clicked.connect(self.start)
 
 
+        # Time setting section
+        self.nameLabel = QLabel(self)
+        self.nameLabel.setText('시간 설정 후 Confirm (기본값 5초) : ')
+        self.line = QLineEdit(self)
+
+        self.line.move(240, 45)
+        self.line.resize(self.line.sizeHint())
+        self.nameLabel.move(20, 50)
+        self.nameLabel.resize(self.nameLabel.sizeHint())
+
+        btn_confirm = QPushButton('confirm', self)
+        btn_confirm.move(400, 45)
+        btn_confirm.resize(btn_confirm.sizeHint())
+        btn_confirm.clicked.connect(self.text_changed)
+
+
         # 전체적인 창 틀에 관한 설정
 
         self.setWindowTitle('Test First Application')
@@ -59,11 +76,18 @@ class MyApp(QMainWindow) :
         # self.setWindowIcon(QIcon('test.png'))
         # setWindowIcon - 어플리케이션 아이콘을 설정
 
-        self.setGeometry(300, 300, 500, 500)
+        self.setGeometry(300, 300, 500, 250)
         # setGeometry - 창의 위치와 크기를 설정 x, y, 너비, 높이
 
         self.show()
         # show - 위젯을 스크린에 보여줌
+
+
+    def text_changed(self):
+        global connection_time
+        connection_time = self.line.text()
+        print(connection_time)
+
 
 
 
@@ -85,6 +109,10 @@ class MyApp(QMainWindow) :
                     global let_bool
                     let_bool = False
                     QCoreApplication.instance().quit()
+
+                elif event.key == keyboard.Key.space:
+                    print('pause')
+                    os.system("pause")
 
     def start(self):
         if 'lines' in globals():
